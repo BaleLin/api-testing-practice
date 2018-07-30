@@ -48,6 +48,14 @@ public class RestAssuredExercises2Test {
 	 ******************************************************/
 
 	//todo
+	static Stream<Arguments> driverDataProvider2() {
+		return Stream.of(
+				Arguments.of("1", "1"),
+				Arguments.of("2", "3"),
+				Arguments.of("3", "2"),
+				Arguments.of("4", "2")
+		);
+	}
 
 	/*******************************************************
 	 * Request data for a specific circuit (for Monza this 
@@ -75,13 +83,18 @@ public class RestAssuredExercises2Test {
 	 * /2015/1/drivers/max_verstappen/pitstops.json)
 	 * and verify the number of pit stops me
 	 ******************************************************/
-	
-	@Test
-	public void checkNumberOfPitstopsForMaxVerstappenIn2015() {
+
+	@ParameterizedTest
+	@MethodSource("driverDataProvider2")
+	public void checkNumberOfPitstopsForMaxVerstappenIn2015(String driverName,String permanentNumber) {
 		
 		given().
+				pathParam("number", driverName).
 			spec(requestSpec).
 		when().
-		then();
+		get("/2015/{number}/drivers/max_verstappen/pitstops.json").
+		then().
+		assertThat().
+		body("MRData.total",equalTo(permanentNumber));
 	}
 }
