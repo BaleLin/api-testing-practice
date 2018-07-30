@@ -7,7 +7,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.CoreMatchers.containsString;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.hasItems;
 
 
 public class RestAssuredExercises1Test {
@@ -102,7 +104,9 @@ public class RestAssuredExercises1Test {
         given().
                 spec(requestSpec).
                 when().
-                then();
+                get("/2014/circuits.json").
+                then().
+                body("MRData.CircuitTable.Circuits.circuitId", hasItems("silverstone"));
     }
 
     /***********************************************
@@ -114,11 +118,12 @@ public class RestAssuredExercises1Test {
 
     @Test
     public void checkThereWasNoRaceAtNurburgringIn2014() {
-
-        given().
-                spec(requestSpec).
-                when().
-
-                then();
+//
+//        given().
+//                spec(requestSpec).
+//                when().
+//                get("/2014/circuits.json").
+//                then().
+//               // body();
     }
 }
