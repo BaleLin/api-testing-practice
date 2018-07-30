@@ -4,8 +4,14 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.params.ParameterizedTest;
+import org.junit.jupiter.params.provider.Arguments;
+import org.junit.jupiter.params.provider.MethodSource;
+
+import java.util.stream.Stream;
 
 import static io.restassured.RestAssured.given;
+import static org.hamcrest.Matchers.equalTo;
 
 
 public class RestAssuredExercises2Test {
@@ -21,15 +27,18 @@ public class RestAssuredExercises2Test {
 			setBasePath("/api/f1").
 			build();
 	}
-	
+
 	/*******************************************************
 	 * Use junit-jupiter-params for @ParameterizedTest that
 	 * specifies in which country
 	 * a specific circuit can be found (specify that Monza 
 	 * is in Italy, for example) 
 	 ******************************************************/
-
-	//todo
+	static Stream<Arguments> driverDataProvider() {
+		return Stream.of(
+				Arguments.of("monza", "Italy")
+		);
+	}
 
 	/*******************************************************
 	 * Use junit-jupiter-params for @ParameterizedTest that specifies for all races
@@ -45,21 +54,26 @@ public class RestAssuredExercises2Test {
 	 * is /circuits/monza.json)
 	 * and check the country this circuit can be found in
 	 ******************************************************/
-	
-	@Test
-	public void checkCountryForCircuit() {
+	@ParameterizedTest
+	@MethodSource("driverDataProvider")
+	public void checkCountryForCircuit(String driverName,String permanentNumber) {
 		
 		given().
-			spec(requestSpec).
-		when().
-		then();
+				pathParam("driver", driverName).
+				spec(requestSpec).
+				when().
+				get("/circuits/{driver}.json").
+				then().
+				assertThat().
+				body("MRData.CircuitTable.Circuits[0].Location.country", equalTo(permanentNumber));
+
 	}
 	
 	/*******************************************************
 	 * Request the pitstop data for the first four races in
 	 * 2015 for Max Verstappen (for race 1 this is
 	 * /2015/1/drivers/max_verstappen/pitstops.json)
-	 * and verify the number of pit stops made
+	 * and verify the number of pit stops me
 	 ******************************************************/
 	
 	@Test
