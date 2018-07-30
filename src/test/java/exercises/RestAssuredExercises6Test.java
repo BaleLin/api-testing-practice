@@ -1,5 +1,6 @@
 package exercises;
 
+import dataentities.Car;
 import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
@@ -32,11 +33,15 @@ public class RestAssuredExercises6Test {
 
 	@Test
 	public void checkThatPostingA2012FordFocusReturnsHttp200() {
-
+		Car car = new Car("Ford","Focus",2012);
 		given().
-			spec(requestSpec).
+		spec(requestSpec).
+		body(car).
 		when().
-		then();
+		post("/car/postcar").
+		then().
+		assertThat().
+		statusCode(200);
 	}
 
 	/*******************************************************
