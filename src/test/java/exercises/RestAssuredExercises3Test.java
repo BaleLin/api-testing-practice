@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Test;
 import static io.restassured.RestAssured.given;
 import static io.restassured.path.json.JsonPath.from;
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.core.Is.is;
 
 public class RestAssuredExercises3Test {
 
@@ -66,11 +67,15 @@ public class RestAssuredExercises3Test {
 
 
     static void getNinthDriverId() {
-        String json = given().
-                spec(requestSpec).
-                when().get("/2016/drivers.json").getBody().asString();
-        ninthDriverId = from(json).get("MRData.DriverTable.Drivers[8].driverId").toString();
-
+        ninthDriverId =
+                given().
+                        spec(requestSpec).
+                        when().
+                        get("2016/drivers.json").
+                        then().
+                        contentType(ContentType.JSON).
+                        extract().
+                        path("MRData.DriverTable.Drivers[8].driverId");
     }
 
     /*******************************************************
@@ -103,11 +108,13 @@ public class RestAssuredExercises3Test {
 
     @Test
     public void useExtractedDriverId() {
-
-        given().pathParam("id",ninthDriverId).
+        given().
                 spec(requestSpec).
-                when().get("/drivers/{id}.json").
-                then();
+                pathParam("ninthDriverId", ninthDriverId).
+                when().
+                get("/drivers/{ninthDriverId}.json").
+                then().
+                body("MRData.DriverTable.Drivers[0].nationality", is("German"));
 
 
     }

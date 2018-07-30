@@ -4,8 +4,15 @@ import io.restassured.builder.RequestSpecBuilder;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.matchers.LessThan;
+import org.omg.CORBA.TIMEOUT;
+
+import java.util.concurrent.TimeUnit;
 
 import static io.restassured.RestAssured.given;
+import static io.restassured.path.json.JsonPath.from;
+import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.Matchers.lessThan;
 
 public class RestAssuredExercises4Test {
 
@@ -41,7 +48,15 @@ public class RestAssuredExercises4Test {
     private static String accessToken;
 
     public static void retrieveOAuthToken() {
-
+    accessToken = given().
+            auth().
+            preemptive().
+            basic("oauth","gimmeatoken").
+            spec(requestSpec).
+            when().
+            get("/oauth2/token").
+            then().
+            extract().path("access_token");
     }
 
     /*******************************************************
@@ -57,9 +72,14 @@ public class RestAssuredExercises4Test {
     public void checkNumberOfPayments() {
 
         given().
+                auth().
+                preemptive().
+                oauth2(accessToken).
                 spec(requestSpec).
                 when().
-                then();
+                get("/payments").
+                then().
+               body("paymentsCount",equalTo(4));
     }
 
     /*******************************************************
@@ -75,6 +95,9 @@ public class RestAssuredExercises4Test {
         given().
                 spec(requestSpec).
                 when().
-                then();
+                get("/2014/circuits.json").
+                then().
+                assertThat().
+                time(lessThan(100L),TimeUnit.MILLISECONDS);
     }
 }
