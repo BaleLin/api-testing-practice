@@ -1,7 +1,7 @@
 {
   "request": {
     "method": "GET",
-    "url": "/car/getcar/alfaromeogiulia"
+    "url": "/"
   },
   "response": {
     "status": 200,
