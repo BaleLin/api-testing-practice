@@ -5,11 +5,10 @@ import io.restassured.http.ContentType;
 import io.restassured.specification.RequestSpecification;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
+import org.mockito.internal.matchers.Not;
 
 import static io.restassured.RestAssured.given;
-import static org.hamcrest.CoreMatchers.containsString;
-import static org.hamcrest.CoreMatchers.equalTo;
-import static org.hamcrest.CoreMatchers.hasItems;
+import static org.hamcrest.CoreMatchers.*;
 
 
 public class RestAssuredExercises1Test {
@@ -118,12 +117,13 @@ public class RestAssuredExercises1Test {
 
     @Test
     public void checkThereWasNoRaceAtNurburgringIn2014() {
-//
-//        given().
-//                spec(requestSpec).
-//                when().
-//                get("/2014/circuits.json").
-//                then().
-//               // body();
+
+        given().
+                spec(requestSpec).
+                when().
+                get("/2014/circuits.json").
+                then().
+                body("MRData.CircuitTable.Circuits.circuitId",not(hasItems("nurburgring")));
+
     }
 }
