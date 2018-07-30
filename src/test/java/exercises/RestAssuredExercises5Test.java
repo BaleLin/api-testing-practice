@@ -104,8 +104,10 @@ public class RestAssuredExercises5Test {
 	public void checkTwoRecordsHaveBeenSetByCarsWhoseMakeEndOnBenz() {
 		
 		given().
-			spec(requestSpec).
+		spec(requestSpec).
 		when().
-		then();
+		get("/xml/speedrecords").
+		then().
+		body("speedRecords.car.findAll{it.@make.grep(~/.*Benz/)}.size()",equalTo(2));
 	}
 }
